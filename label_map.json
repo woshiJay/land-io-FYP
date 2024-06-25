@@ -1,0 +1,23 @@
+{
+    "agricultural": 0,
+    "airplane": 1,
+    "baseballdiamond": 2,
+    "beach": 3,
+    "buildings": 4,
+    "chaparral": 5,
+    "denseresidential": 6,
+    "forest": 7,
+    "freeway": 8,
+    "golfcourse": 9,
+    "intersection": 10,
+    "mediumresidential": 11,
+    "mobilehomepark": 12,
+    "overpass": 13,
+    "parkinglot": 14,
+    "river": 15,
+    "runway": 16,
+    "sparseresidential": 17,
+    "storagetanks": 18,
+    "tenniscourt": 19,
+    "harbor": 20
+}
