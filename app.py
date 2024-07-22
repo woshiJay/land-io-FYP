@@ -205,6 +205,20 @@ def predict_image(image, model):
 
     return predicted_class, confidence
 
+# def predict_image(image, model):
+#     img_array = preprocess_model_image(image)
+#     prediction = model.predict(img_array)
+#     class_index = np.argmax(prediction)
+#     classes = ['Agricultural', 'Airplane', 'Baseball Diamond',
+#             'Beach', 'Buildings', 'Chaparral', 'Dense Residential',
+#             'Forest', 'Freeway', 'Golf Course', 'Harbor', 'Intersection',
+#             'Medium Residential', 'Mobile Home Park', 'Overpass',
+#             'Parking Lot', 'River', 'Runway', 'Sparse Residential',
+#             'Storage Tanks', 'Tennis Court']
+#     confidence = prediction[0][class_index]
+#     return classes[class_index], confidence, prediction[0]
+
+
 uploaded_file = st.file_uploader("Choose a satellite image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
