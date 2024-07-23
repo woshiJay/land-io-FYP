@@ -8,7 +8,6 @@ def display_model_visualization():
     # Model selection using radio buttons
     models = ["baseCNN", 
               "denseNet", 
-            #   "EfficientNet", 
               "inception", 
               "ResNet", 
               "vgg", 

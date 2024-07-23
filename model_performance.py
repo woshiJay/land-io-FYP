@@ -46,11 +46,10 @@ def display_model_performance():
         status_text = st.empty()
 
         models = {}
-        model_names = ["Base CNN", "DenseNet", "EfficientNet", "InceptionNet", "ResidualNet", "VGGNet", "XceptionNet"]
+        model_names = ["Base CNN", "DenseNet", "InceptionNet", "ResidualNet", "VGGNet", "XceptionNet"]
         model_paths = [
             'models/best_CNN_model.keras',
             'models/best_DenseNet_model.keras',
-            'models/best_EffNet_model.keras',
             'models/best_Inception_model.keras',
             'models/best_ResNet_model.keras',
             'models/best_VIT_model.keras',
