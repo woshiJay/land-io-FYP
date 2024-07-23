@@ -174,12 +174,17 @@ elif page == "Model Prediction":
     # Load the models
     with st.spinner("Loading models... This may take a moment."):
         base_cnn_model = safe_load_model('models/best_CNN_model.keras')
-        residual_net_model = safe_load_model('models/best_ResNet_model.keras')
+        dense_net_model = safe_load_model('models/best_denseNet_model.keras')
         efficient_net_model = safe_load_model('models/best_EffNet_model.keras')
+        inception_net_model = safe_load_model('models/best_Inception_model.keras')
+        residual_net_model = safe_load_model('models/best_ResNet_model.keras')
+        vit_model = safe_load_model('models/best_VIT_model.keras')
+        xception_net_model = safe_load_model('models/best_Xception_model.keras')
 
     models = {
         "Base CNN": base_cnn_model,
         "ResidualNet": residual_net_model,
+        "XceptionNet": xception_net_model
     }
 
     models = {k: v for k, v in models.items() if v is not None} # Filter out failed models
