@@ -6,7 +6,13 @@ def display_model_visualization():
     st.title("Model Visualization")
 
     # Model selection using radio buttons
-    models = ["baseCNN", "denseNet", "inception", "ResNet", "xception"]
+    models = ["baseCNN", 
+              "denseNet", 
+            #   "EfficientNet", 
+              "inception", 
+              "ResNet", 
+              "vgg", 
+              "xception"]
     selected_model = st.sidebar.radio("Select Model:", models)
 
     # Tabbed interface for plotting and confusion matrix
