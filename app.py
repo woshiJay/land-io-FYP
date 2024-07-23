@@ -175,7 +175,6 @@ elif page == "Model Prediction":
     with st.spinner("Loading models... This may take a moment."):
         base_cnn_model = safe_load_model('models/best_CNN_model.keras')
         dense_net_model = safe_load_model('models/best_denseNet_model.keras')
-        efficient_net_model = safe_load_model('models/best_EffNet_model.keras')
         inception_net_model = safe_load_model('models/best_Inception_model.keras')
         residual_net_model = safe_load_model('models/best_ResNet_model.keras')
         vit_model = safe_load_model('models/best_VIT_model.keras')
