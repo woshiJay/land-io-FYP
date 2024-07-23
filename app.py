@@ -1,3 +1,4 @@
+# Imports and setup
 import streamlit as st
 import streamlit.components.v1 as components
 import os
@@ -7,10 +8,14 @@ import io
 import cv2
 import time
 import numpy as np
+import plotly.graph_objects as go
+import pandas as pd
 from PIL import Image, ImageEnhance
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
-
+from tensorflow.keras.preprocessing.image import img_to_array, ImageDataGenerator
+from tensorflow.keras.optimizers import Adam
+# --------------------------------------------------------------------
+# Section 1: Introduction and Overview
 st.title("FYP APP")
 
 # Function to load images from a folder
@@ -156,7 +161,6 @@ with st.spinner("Loading models... This may take a moment."):
 models = {
     "Base CNN": base_cnn_model,
     "ResidualNet": residual_net_model,
-    "EfficientNet": efficient_net_model
 }
 
 models = {k: v for k, v in models.items() if v is not None} # Filter out failed models
@@ -205,20 +209,6 @@ def predict_image(image, model):
 
     return predicted_class, confidence
 
-# def predict_image(image, model):
-#     img_array = preprocess_model_image(image)
-#     prediction = model.predict(img_array)
-#     class_index = np.argmax(prediction)
-#     classes = ['Agricultural', 'Airplane', 'Baseball Diamond',
-#             'Beach', 'Buildings', 'Chaparral', 'Dense Residential',
-#             'Forest', 'Freeway', 'Golf Course', 'Harbor', 'Intersection',
-#             'Medium Residential', 'Mobile Home Park', 'Overpass',
-#             'Parking Lot', 'River', 'Runway', 'Sparse Residential',
-#             'Storage Tanks', 'Tennis Court']
-#     confidence = prediction[0][class_index]
-#     return classes[class_index], confidence, prediction[0]
-
-
 uploaded_file = st.file_uploader("Choose a satellite image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
@@ -238,8 +228,173 @@ if uploaded_file is not None:
 
         st.success(f"This image is classified as {predicted_class}.")
 
-st.markdown("---")
-st.write("Note: This app uses pre-trained models to classify satellite images into various categories.")
 # --------------------------------------------------------------------
 # Section 4: Showcase all matplotlib accuracy and loss plots
+
 st.subheader("Model Performance")
+
+# Function to safely load and compile models
+@st.cache_resource
+def safe_load_model(model_path):
+    try:
+        model = load_model(model_path, compile=False)
+        model.compile(optimizer=Adam(learning_rate=0.0001),
+                      loss='categorical_crossentropy',
+                      metrics=['accuracy'])
+        return model
+    except Exception as e:
+        st.error(f"Error loading model from {model_path}: {str(e)}")
+        return None
+
+# Function to evaluate model
+def evaluate_model(model, data_generator):
+    return model.evaluate(data_generator, verbose=0)
+
+# Load and compile the models
+models = {
+    "Base CNN": safe_load_model('models/best_CNN_model.keras'),
+    "DenseNet": safe_load_model('models/best_DenseNet_model.keras'),
+    # "EfficientNet": safe_load_model('models/best_EffNet_model.keras'),
+    "InceptionNet": safe_load_model('models/best_Inception_model.keras'),
+    "ResidualNet": safe_load_model('models/best_ResNet_model.keras'),
+    # "VGGNet": safe_load_model('models/best_VIT_model.keras'),
+    "XceptionNet": safe_load_model('models/best_Xception_model.keras')
+}
+
+# Filter out failed models
+models = {k: v for k, v in models.items() if v is not None}
+
+if not models:
+    st.error("No models could be loaded. Please check your model files and paths.")
+    st.stop()
+else:
+    st.success(f"Successfully loaded and compiled {len(models)} model(s).")
+
+# Prepare data generator for evaluation
+val_data_path = "data/images_train_test_val/validation"
+val_datagen = ImageDataGenerator(rescale=1./255)
+val_generator = val_datagen.flow_from_directory(
+    val_data_path,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    shuffle=False
+)
+
+# Evaluate models
+results = {}
+for model_name, model in models.items():
+    with st.spinner(f'Evaluating {model_name}...'):
+        loss, accuracy = evaluate_model(model, val_generator)
+        results[model_name] = {'Test Loss': loss, 'Test Accuracy': accuracy}
+
+# Create DataFrame from results
+df = pd.DataFrame.from_dict(results, orient='index')
+df = df.sort_values('Test Accuracy', ascending=False)
+df = df.reset_index().rename(columns={'index': 'Model'})
+
+# Create the plot
+fig = go.Figure()
+
+# Add Test Accuracy bars
+fig.add_trace(go.Bar(
+    x=df['Model'],
+    y=df['Test Accuracy'],
+    name='Test Accuracy',
+    marker_color='rgb(26, 118, 255)'
+))
+
+# Add Test Loss line
+fig.add_trace(go.Scatter(
+    x=df['Model'],
+    y=df['Test Loss'],
+    name='Test Loss',
+    yaxis='y2',
+    line=dict(color='rgb(219, 64, 82)', width=2)
+))
+
+# Update layout
+fig.update_layout(
+    title='Model Performance Comparison',
+    xaxis_title='Model Type',
+    yaxis_title='Accuracy',
+    yaxis2=dict(
+        title='Loss',
+        overlaying='y',
+        side='right'
+    ),
+    barmode='group',
+    legend=dict(x=0.01, y=0.99, bgcolor='rgba(255, 255, 255, 0.5)'),
+    template='plotly_white'
+)
+
+# Display the plot
+st.plotly_chart(fig, use_container_width=True)
+
+# Display the data table
+st.write("Model Performance Data:")
+st.dataframe(df)
+
+#--------------------------------------------------------------------
+# Section 5: Showcase all matplotlib accuracy and loss plots
+st.header("Model Visualization")
+
+# Assuming you have three models: Base CNN, ResidualNet, and EfficientNet
+models = ["Base CNN", "DenseNet", "EfficientNet", "Inception", "ResidualNet", "VIT", "Xception"]
+
+# Create columns for model selection and navigation
+col1, col2, col3, col4, col5 = st.columns([1, 2, 2, 1, 1])
+
+with col1:
+    if st.button("⬅️ Previous"):
+        if 'model_index' in st.session_state:
+            st.session_state.model_index = (st.session_state.model_index - 1) % len(models)
+        else:
+            st.session_state.model_index = len(models) - 1
+
+with col5:
+    if st.button("Next ➡️"):
+        if 'model_index' in st.session_state:
+            st.session_state.model_index = (st.session_state.model_index + 1) % len(models)
+        else:
+            st.session_state.model_index = 0
+
+with col3:
+    if 'model_index' not in st.session_state:
+        st.session_state.model_index = 0
+    current_model = models[st.session_state.model_index]
+    st.subheader(f"Model Type: {current_model}")
+
+# Create columns for plot selection
+col_plot, col_matrix = st.columns(2)
+
+with col_plot:
+    if st.button("Model Plotting", use_container_width=True):
+        st.session_state.show_plot = True
+        st.session_state.show_matrix = False
+
+with col_matrix:
+    if st.button("Confusion Matrix", use_container_width=True):
+        st.session_state.show_plot = False
+        st.session_state.show_matrix = True
+
+# Function to load and display image
+def load_and_display_image(path):
+    if os.path.exists(path):
+        image = Image.open(path)
+        st.image(image, use_column_width=True)
+    else:
+        st.error(f"Image not found: {path}")
+
+# Display the selected visualization
+if 'show_plot' in st.session_state and st.session_state.show_plot:
+    plot_path = f"plotting/{current_model.lower().replace(' ', '_')}_output.png"
+    load_and_display_image(plot_path)
+
+if 'show_matrix' in st.session_state and st.session_state.show_matrix:
+    matrix_path = f"confusion_matrix/{current_model.lower().replace(' ', '_')}_output.png"
+    load_and_display_image(matrix_path)
+
+# --------------------------------------------------------------------
+st.markdown("---")
+st.write("Note: This app uses pre-trained models to classify satellite images into various categories.")
