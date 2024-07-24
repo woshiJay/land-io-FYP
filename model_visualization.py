@@ -7,7 +7,7 @@ def load_and_display_image(path):
         image = Image.open(path)
         st.image(image, use_column_width=True)
     else:
-        st.error(f"Image not found: {path}")
+        st.write("This model does not have any plot.")
 
 def display_model_details(model):
     st.subheader(f"Model Selected: {model}")
