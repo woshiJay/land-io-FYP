@@ -16,17 +16,17 @@ from tensorflow.keras.preprocessing.image import img_to_array, ImageDataGenerato
 from tensorflow.keras.optimizers import Adam
 
 # Sections 4 & 5
-import model_performance
+import model_assessment
 import model_visualization
 
 # --------------------------------------------------------------------
 # Sidebar for navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Introduction", "Preprocessing", "Model Prediction", "Model Performance", "Model Visualization"])
+st.sidebar.title("Land Navigation Application")
+page = st.sidebar.radio("Go to", ["Introduction", "Preprocessing", "Model Prediction", "Model Assessment", "Model Visualization"])
 
 # --------------------------------------------------------------------
 # Main title
-st.title("FYP APP")
+st.title("")
 
 # --------------------------------------------------------------------
 # Section 1: Introduction and Overview
@@ -174,19 +174,19 @@ elif page == "Model Prediction":
     # Load the models
     with st.spinner("Loading models... This may take a moment."):
         base_cnn_model = safe_load_model('models/best_CNN_model.keras')
-        dense_net_model = safe_load_model('models/best_denseNet_model.keras')
-        inception_net_model = safe_load_model('models/best_Inception_model.keras')
-        residual_net_model = safe_load_model('models/best_ResNet_model.keras')
-        vit_model = safe_load_model('models/best_VIT_model.keras')
+        hybridv1_model = safe_load_model('models/best_HybridV1_model.keras')
+        vgg16_model = safe_load_model('models/best_VIT_model.keras')
         xception_net_model = safe_load_model('models/best_Xception_model.keras')
 
     models = {
         "Base CNN": base_cnn_model,
-        "ResidualNet": residual_net_model,
-        "XceptionNet": xception_net_model
+        "HybridV1": hybridv1_model,
+        "VGG16": vgg16_model,
+        "XceptionNet": xception_net_model,
+        "Ensemble (VGG16 + XceptionNet)": "ensemble"
     }
 
-    models = {k: v for k, v in models.items() if v is not None} # Filter out failed models
+    models = {k: v for k, v in models.items() if v is not None or v == "ensemble"}
 
     if not models:
         st.error("No models could be loaded. Please check your model files and paths.")
@@ -216,9 +216,14 @@ elif page == "Model Prediction":
     def predict_image(image, model):
         # Preprocess the image
         img_array = preprocess_model_image(image)
-
-        # Make prediction
-        prediction = model.predict(img_array)
+        
+        if model == "ensemble":
+            preds_vgg16 = vgg16_model.predict(img_array)
+            preds_xception = xception_net_model.predict(img_array)
+            prediction = (preds_vgg16 + preds_xception) / 2
+        else:
+            prediction = model.predict(img_array)
+        
         class_index = np.argmax(prediction)
         
         classes = ['Agricultural', 'Airplane', 'Baseball Diamond',
@@ -253,8 +258,8 @@ elif page == "Model Prediction":
 
 # --------------------------------------------------------------------
 # Section 4 
-elif page == "Model Performance":
-    model_performance.display_model_performance()
+elif page == "Model Assessment":
+    model_assessment.display_model_assessment()
 
 # --------------------------------------------------------------------
 # Section 5
