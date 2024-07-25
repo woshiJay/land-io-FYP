@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 from PIL import Image
+import inspect
+from models import MODEL_FUNCTIONS
 
 def load_and_display_image(path):
     if os.path.exists(path):
@@ -9,17 +11,21 @@ def load_and_display_image(path):
     else:
         st.write("This model does not have any plot.")
 
+def get_model_code(model):
+    if model in MODEL_FUNCTIONS:
+        return inspect.getsource(MODEL_FUNCTIONS[model])
+    return f"# Code for {model} not available"
+
 def display_model_details(model):
     st.subheader(f"Model Selected: {model}")
     
     # Description of model (placeholder)
-    st.subheader("Description of model")
     st.write(f"This is a placeholder description for {model}.")
     
-    # Code snippet (placeholder)
+    # Code snippet
     st.subheader("Code Snippet")
-    st.code(f"# Placeholder code for {model}\ndef model():\n    pass", language="python")
-    
+    st.code(get_model_code(model), language="python")
+
     # Plotting and confusion matrix
     tab1, tab2 = st.tabs(["Model Plotting", "Confusion Matrix"])
     
