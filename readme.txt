@@ -1,3 +1,14 @@
+A functional dashboard that helps users understand land use types and scene classification while showcasing the predictive capabilities between 3 classes of models consisting of CNN, Pretrain Models, and hybrid models.
+
+There are six main functionalities in this dashboard.
+-- Home Page
+-- Image Preprocessing
+-- Model Prediction
+-- Model Assessment
+-- Model Visualization
+-- Chatbot
+
+========================================================================
 UC Merced Land Use Dataset
 
 October 28, 2010
