@@ -4,12 +4,12 @@ A functional dashboard that helps users understand land use types and scene clas
 
 ## Functionalities
 There are six main functionalities in this dashboard.
--- Home Page
--- Image Preprocessing
--- Model Prediction
--- Model Assessment
--- Model Visualization
--- Chatbot
+- Home Page
+- Image Preprocessing
+- Model Prediction
+- Model Assessment
+- Model Visualization
+- Chatbot
 
 ========================================================================
 UC Merced Land Use Dataset
