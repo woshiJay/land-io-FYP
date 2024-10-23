@@ -12,6 +12,7 @@ There are six main functionalities in this dashboard.
 - Chatbot
 
 ========================================================================
+
 UC Merced Land Use Dataset
 
 October 28, 2010
