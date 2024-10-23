@@ -30,6 +30,7 @@ Please cite the following paper when publishing results that use this dataset:
 Yi Yang and Shawn Newsam, "Bag-Of-Visual-Words and Spatial Extensions for Land-Use Classification," ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (ACM GIS), 2010.
 
 ========================================================================
+
 Shawn D. Newsam
 Assistant Professor and Founding Faculty
 Electrical Engineering & Computer Science
@@ -38,6 +39,7 @@ University of California, Merced
 Voice: (209) 228-4167
 Email: snewsam@ucmerced.edu
 Web: http://faculty.ucmerced.edu/snewsam
+
 ========================================================================
 
 This material is based upon work supported by the National Science Foundation under Grant No. 0917069.
