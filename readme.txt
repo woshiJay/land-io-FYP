@@ -1,5 +1,8 @@
+# Data Analytics Final Year Project
+
 A functional dashboard that helps users understand land use types and scene classification while showcasing the predictive capabilities between 3 classes of models consisting of CNN, Pretrain Models, and hybrid models.
 
+## Functionalities
 There are six main functionalities in this dashboard.
 -- Home Page
 -- Image Preprocessing
